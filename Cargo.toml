@@ -1,0 +1,16 @@
+[package]
+name = "er-proximity-chat"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+log = "0.4.33"
+simplelog = "0.12.2"
+windows-sys = { version = "0.61.2", features = ["Win32_System_Console"] }
+eldenring = { git = "https://github.com/vswarte/fromsoftware-rs", package = "eldenring" }
+fromsoftware_shared = { git = "https://github.com/vswarte/fromsoftware-rs", package = "fromsoftware-shared" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.145"
