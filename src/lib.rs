@@ -1,6 +1,9 @@
 mod logging;
 mod er;
 
+use er::playerstate::get_player_position;
+use er::coords::globalize;
+
 use std::thread;
 use std::time::Duration;
 
@@ -26,6 +29,9 @@ fn main_thread() {
     logging::init();
     let cs_task = CSTaskImp::wait_for_instance(Duration::MAX).unwrap();
     cs_task.run_recurring(
-        |_: &FD4TaskData | {}, CSTaskGroupIndex::ChrIns_PostPhysics
+        |_: &FD4TaskData | {
+            let Some(state) = (unsafe { get_player_position() }) else { return; };
+            let Some(_global) = globalize(&state) else {return;};
+        }, CSTaskGroupIndex::ChrIns_PostPhysics
     );
 }
