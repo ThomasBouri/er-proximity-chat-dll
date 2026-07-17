@@ -1,7 +1,7 @@
 mod logging;
 mod er;
 
-use er::playerstate::get_player_position;
+use er::playerstate::{get_player_position, get_player_stats};
 use er::coords::globalize;
 
 use std::thread;
@@ -13,6 +13,7 @@ use eldenring::{
 };
 
 use fromsoftware_shared::SharedTaskImpExt;
+
 
 #[unsafe(no_mangle)]
 #[allow(non_snake_case)]
@@ -30,8 +31,9 @@ fn main_thread() {
     let cs_task = CSTaskImp::wait_for_instance(Duration::MAX).unwrap();
     cs_task.run_recurring(
         |_: &FD4TaskData | {
-            let Some(state) = (unsafe { get_player_position() }) else { return; };
-            let Some(_global) = globalize(&state) else {return;};
+            let Some(pos) = (unsafe { get_player_position() }) else { return; };
+            let Some(_global) = globalize(&pos) else {return;};
+            let Some(_stats) = (unsafe {get_player_stats()}) else { return; };
         }, CSTaskGroupIndex::ChrIns_PostPhysics
     );
 }

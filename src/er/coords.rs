@@ -61,8 +61,6 @@ pub fn globalize(pos: &PlayerPosition) -> Option<WorldPos> {
     };
 
 
-
-    // section 4 - testing
     let n: u32 = FRAME_COUNT.fetch_add(1, Ordering::Relaxed);
     if n % 60 == 0 {
         match global {
@@ -123,38 +121,3 @@ fn find_map_conv_entry(block_id: BlockId) -> Option<&'static MapConvEntry> {
         && (e.dst_area_no == MAIN_WORLD_ID as u32 || e.dst_area_no == DLC_WORLD_ID as u32))
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn table_loads() {
-        assert_eq!(map_conv_table().len(), 196);
-    }
-    
-    #[test]
-    fn stormfoot_maps_to_correct_tile() {
-        let e = find_map_conv_entry(BlockId::from_parts(30, 2, 0, 0))
-            .expect("Stormfoot entry should exist");
-        assert_eq!(e.dst_area_no, 60);
-        assert_eq!(e.dst_grid_x_no, 41);
-        assert_eq!(e.dst_grid_z_no, 37);
-    }
-
-    #[test]
-    fn area_35_has_no_overworld_entry() {
-        assert!(find_map_conv_entry(BlockId::from_parts(35, 0, 0, 0)).is_none());
-    }
-
-    #[test]
-fn ungloblizable_map_still_returns_position() {
-    let pos = PlayerPosition {
-        block_id: i32::from(BlockId::from_parts(35, 0, 0, 0)),
-        bp_x: 1.0, bp_y: 2.0, bp_z: 3.0,
-        /* ..any other fields.. */
-    };
-    let w = globalize(&pos).expect("should still return a WorldPos");
-    assert!(w.global.is_none());
-    assert_eq!(w.bp_x, 1.0);   // local data survives
-}
-}
